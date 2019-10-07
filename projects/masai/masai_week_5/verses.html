@@ -1,0 +1,94 @@
+<html>
+
+<head>
+    <title>
+        Bhagavad Gita
+    </title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+
+<body>
+    <div class="container">
+        <div>
+            <div class="col-lg-12 p-3 bg-warning text-body text-center">
+              
+                <h1> भगवद्गीता | shrImadbhagavadgItA</h1>
+            </div>
+            <div class="col-lg-12">
+                <img src="/home/madhu/projects/masai/masai_week_5/resources/img.jpg" alt="hedder image"
+                    style="height:auto ; width:100%">
+            </div>
+            <div class="col-lg-12   bg-warning text-dark">
+                <h3 class="text-center text-body">कर्मणये वाधिकारस्ते मां फलेषु कदाचन ।<br />
+                    मां कर्मफलहेतुर्भू: मांते संङगोस्त्वकर्मणि।।</h3>
+            </div>
+            <div class="row justify-content-md-center">
+                <button id="getData" type="button" class="btn btn-secondary btn-lg" data-toggle="button"
+                    aria-pressed="false" autocomplete="off">
+                    Read Me
+                </button>
+            </div>
+            <div id="chapter_number" class="col-lg-12 p-5 bg-warning text-dark">
+            </div>
+        </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script>
+
+            var tokenGen = new XMLHttpRequest();
+            tokenGen.onload = function (){
+                if(tokenGen.status == 200){
+                    console.log(JSON.parse(tokenGen.response))
+                    var tokenJ = JSON.parse(tokenGen.response);
+                    token = tokenJ.access_token;
+                    $( ".input" )(getData(token))   
+            }
+            }
+                tokenGen.open('POST', 'https://bhagavadgita.io/auth/oauth/token?client_id=1chBkWXTpVFqIIa7SEmz0VqCgXvcGMTqoMbQHxbv&client_secret=U3ndCj55memAOQKSxnefFuYb7fFQ17M4awZOrK7jMrXDM9k6hM&grant_type=client_credentials&scope=verse chapter');
+                tokenGen.setRequestHeader('accept','application/json');
+                tokenGen.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+                tokenGen.send()
+
+        function getData(token) {
+            console.log("madhu")
+            var xhr = new XMLHttpRequest();
+            // var access_token = "i4m289Ra39oQHZEVpBXJbXWChuivSQ"
+            var url = 'https://bhagavadgita.io//api/v1/verses?access_token=' + token;
+            xhr.open('GET', url);
+            xhr.send();
+            xhr.onload = function () {
+                if (xhr.status == 200) {
+                    result = xhr.response;
+                     console.log(result);
+                    displayData(result);
+
+
+                }
+                else {
+                    console.log("Error code is:" + xhr.status);
+                }
+            }
+        }
+        $('#chapter_number').hide();
+        var displayData = function (input) {
+            var gitaObjects = JSON.parse(input);
+            console.log(gitaObjects[0]);
+
+            for (key in gitaObjects) {
+                $("#chapter_number").append(" <br/><h3>CHAPTER:"  +gitaObjects[key].chapter_number+ ",VERSE: " + gitaObjects[key].verse_number + "</h3> <br/> <h3>Meaning: </h3>" + gitaObjects[key].meaning + "<br/> <br/><h3>" + gitaObjects[key].text + "</h3> <br/><p>:" + gitaObjects[key].transliteration + "</p> <br/> <p> Word Meanings:  " +gitaObjects[key].word_meanings+ "</p>.")
+            } $('#chapter_number').show(1000);
+
+        }
+
+        var displayBtn = document.querySelector('#getData')
+        displayBtn.addEventListener('click', function () {
+            getData();
+        });
+    </script>
+
+</body>
+</html>
